@@ -1,10 +1,3 @@
-//
-//  ClaudeCodeUIApp.swift
-//  ClaudeCodeUI
-//
-//  Created by Sami Hindi on 05.01.2026.
-//
-
 import SwiftUI
 import SwiftData
 
@@ -12,7 +5,8 @@ import SwiftData
 struct ClaudeCodeUIApp: App {
     var sharedModelContainer: ModelContainer = {
         let schema = Schema([
-            Item.self,
+            Session.self,
+            Message.self,
         ])
         let modelConfiguration = ModelConfiguration(schema: schema, isStoredInMemoryOnly: false)
 
@@ -25,8 +19,23 @@ struct ClaudeCodeUIApp: App {
 
     var body: some Scene {
         WindowGroup {
-            ContentView()
+            MainView()
+                .frame(minWidth: 900, minHeight: 600)
         }
         .modelContainer(sharedModelContainer)
+        .windowStyle(.automatic)
+        .defaultSize(width: 1200, height: 800)
+        .commands {
+            CommandGroup(replacing: .newItem) {
+                Button("New Session") {
+                    NotificationCenter.default.post(name: .newSession, object: nil)
+                }
+                .keyboardShortcut("n", modifiers: .command)
+            }
+        }
     }
+}
+
+extension Notification.Name {
+    static let newSession = Notification.Name("newSession")
 }
